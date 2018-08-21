@@ -1,0 +1,102 @@
+.dialog{
+    border:1px solid #ddd;
+    position: absolute;
+    background-color: #fff;
+    display: flex;
+    flex-flow: column;
+}
+.dialog>.dialog-head{
+    height: 32px;
+}
+.dialog>.dialog-body{
+    flex: 1;
+    overflow: auto;
+}
+.dialog>.dialog-foot{
+    height: 24px;
+}
+.dialog>.dialog-drop-head{
+    cursor: move;
+}
+.dialog>.dialog-drop-tl,
+.dialog>.dialog-drop-tc,
+.dialog>.dialog-drop-tr,
+.dialog>.dialog-drop-cl,
+.dialog>.dialog-drop-cc,
+.dialog>.dialog-drop-cr,
+.dialog>.dialog-drop-bl,
+.dialog>.dialog-drop-bc,
+.dialog>.dialog-drop-br{
+    position: absolute;
+}
+.dialog>.dialog-drop-tl{
+    top:0;
+    left: 0;
+    width: 3px;
+    height: 3px;
+    z-index: 1;
+    background-color: red;
+    cursor: nw-resize;
+}
+.dialog>.dialog-drop-tc{
+    top: 0;
+    left: 0;
+    right: 0;
+    height:3px;
+    background-color:blue;
+    cursor:ns-resize;
+}
+.dialog>.dialog-drop-tr{
+    top:0;
+    right: 0;
+    width:3px;
+    height:3px;
+    z-index: 1;
+    background-color: red;
+    cursor: ne-resize;
+}
+.dialog>.dialog-drop-cl{
+    top:0;
+    bottom: 0;
+    left: 0;
+    width:3px;
+    background-color:blue;
+    cursor: ew-resize;
+}
+.dialog>.dialog-drop-cc{
+    display: none;
+}
+.dialog>.dialog-drop-cr{
+    top:0;
+    bottom: 0;
+    right:0;
+    width: 3px;
+    background-color:blue;
+    cursor: ew-resize;
+}
+.dialog>.dialog-drop-bl{
+    z-index: 1;
+    bottom:0;
+    left:0;
+    width:3px;
+    height:3px;
+    background-color: red;
+    cursor: sw-resize;
+}
+.dialog>.dialog-drop-bc{
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height:3px;
+    background-color:blue;
+    cursor: ns-resize;
+}
+.dialog>.dialog-drop-br{
+    z-index: 1;
+    bottom: 0;
+    right: 0;
+    width: 3px;
+    height: 3px;
+    background-color: red;
+    cursor: se-resize;
+}
