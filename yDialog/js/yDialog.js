@@ -2,37 +2,48 @@
     window.$$ = function (selector) {
         return document.querySelectorAll(selector);
     }
+    window.$dialogDefaultOptions = {
+        // unit:'px',
+        dropElmts: {
+            handle: '.dialog-drop-handle',
+            tl: '.dialog-drop-tl',
+            tc: '.dialog-drop-tc',
+            tr: '.dialog-drop-tr',
+            cl: '.dialog-drop-cl',
+            cc: '.dialog-drop-cc',
+            cr: '.dialog-drop-cr',
+            bl: '.dialog-drop-bl',
+            bc: '.dialog-drop-bc',
+            br: '.dialog-drop-br',
+        },
+        style: {
+            width: '320px',
+            height: '240px',
+            minWidth: '200px',
+            minHeight: '100px',
+            zIndex: 9999
+        }
+    };
     window.$dialog = function (options) {
-        var dialogs = $$('.dialog');
-        var defaultOptions = {
-            // unit:'px',
-            dropElmts: {
-                head: '.dialog-drop-head',
-                tl: '.dialog-drop-tl',
-                tc: '.dialog-drop-tc',
-                tr: '.dialog-drop-tr',
-                cl: '.dialog-drop-cl',
-                cc: '.dialog-drop-cc',
-                cr: '.dialog-drop-cr',
-                bl: '.dialog-drop-bl',
-                bc: '.dialog-drop-bc',
-                br: '.dialog-drop-br',
-            },
-            styles: {
-                width: '320px',
-                height: '240px',
-                minWidth: '200px',
-                minHeight: '100px',
-                zIndex: 9999
-            }
-        };
+
+        if(_isString(options)){
+            var $elmts = options;
+            options = arguments[1];
+        }else{
+            var $elmts = '.dialog';
+        }
+
+
+        var dialogs = $$($elmts);
+
         // 
         _forEachA(dialogs, function (dialog, idx) {
 
-            var opts = _extend(defaultOptions, options);
-            _style(dialog, opts.styles);
-            _drop(dialog,opts);
-            defaultOptions.styles.zIndex++;
+            var opts = _extend($dialogDefaultOptions, options);
+            _style(dialog, opts.style);
+            _addClass(dialog, 'dialog');
+            _drop(dialog, opts);
+            $dialogDefaultOptions.style.zIndex++;
 
         });
         // 设置对像中的drop事件
@@ -41,11 +52,15 @@
             dialog.onmousedown = function (e) {
                 e = e || window.event;
                 _style(dialog, {
-                    zIndex: defaultOptions.styles.zIndex++
+                    zIndex: $dialogDefaultOptions.style.zIndex++
                 })
+                _forEachA($$('.dialog'), function (dialog, idx) {
+                    _removeClass(dialog, 'selected');
+                })
+                _addClass(dialog, 'selected');
             };
-
-            dialog.querySelector(opts.dropElmts.head).onmousedown = function (e) {
+            // 
+            dialog.querySelector(opts.dropElmts.handle).onmousedown = function (e) {
                 e = e || window.event;
 
                 var x = e.clientX;
@@ -105,7 +120,7 @@
                 }
                 document.onmouseup = _mouseup;
                 return false
-            }
+            };
             // 
             dialog.querySelector(opts.dropElmts.tc).onmousedown = function (e) {
                 e = e || window.event;
@@ -123,7 +138,7 @@
                 }
                 document.onmouseup = _mouseup;
                 return false
-            }
+            };
             // 
             dialog.querySelector(opts.dropElmts.tr).onmousedown = function (e) {
                 e = e || window.event;
@@ -148,7 +163,7 @@
                 }
                 document.onmouseup = _mouseup;
                 return false
-            }
+            };
             // 
             dialog.querySelector(opts.dropElmts.cl).onmousedown = function (e) {
                 e = e || window.event;
@@ -166,7 +181,7 @@
                 }
                 document.onmouseup = _mouseup;
                 return false
-            }
+            };
             // 
             dialog.querySelector(opts.dropElmts.cr).onmousedown = function (e) {
                 e = e || window.event;
@@ -212,7 +227,7 @@
                 }
                 document.onmouseup = _mouseup;
                 return false
-            }
+            };
             // 
             dialog.querySelector(opts.dropElmts.bc).onmousedown = function (e) {
                 e = e || window.event;
@@ -266,30 +281,67 @@
             document.onmousemove = null;
             document.onmouseup = null;
         }
-        // 设置样式
-        function _style(elmt, styles) {
-            _extend(elmt.style,styles)
-        }
-        // 遍历obj
-        function _forEach(obj, callback) {
-            for (var i in obj) {
-                callback(obj[i], i)
-            }
-        }
-        // 遍历array
-        function _forEachA(arr, callback) {
-            for (var i = 0; i < arr.length; i++) {
-                callback(arr[i], i)
-            }
-        }
-        // obj简单继承
-        function _extend(a, b) {
-            _forEach(b, function (item, idx) {
-                a[idx] = item;
-            })
-            return a
-        }
+        
 
         return dialogs
+    }
+    // 设置样式
+    function _style(elmt, style) {
+        _extend(elmt.style, style)
+    }
+    // 遍历obj
+    function _forEach(obj, callback) {
+        for (var i in obj) {
+            callback(obj[i], i)
+        }
+    }
+    // 遍历array
+    function _forEachA(arr, callback) {
+        for (var i = 0; i < arr.length; i++) {
+            callback(arr[i], i)
+        }
+    }
+    // obj继承
+    function _extend(a, b) {
+        _forEach(b, function (item, idx) {
+            if (_isObject(item)) {
+                a[idx] = _extend(a[idx], item)
+            } else {
+                a[idx] = item;
+            }
+        })
+        return a
+    }
+    // isStriing
+    function _isString(val) {
+        return typeof (val) === 'string';
+    }
+    // isObj
+    function _isObject(val) {
+        return typeof (val) === 'object';
+    }
+    // addClass
+    function _addClass(elmt, className) {
+
+        var tmp = [];
+        _forEachA(elmt.className.split(' '), function (item, idx) {
+            if (!!item && item != className) {
+                tmp.push(item)
+            }
+        });
+        tmp.push(className);
+        elmt.className = tmp.join(' ');
+
+    }
+    // removeClass
+    function _removeClass(elmt, className) {
+
+        var tmp = [];
+        _forEachA(elmt.className.split(' '), function (item, idx) {
+            if (!!item && item != className) {
+                tmp.push(item)
+            }
+        });
+        elmt.className = tmp.join(' ');
     }
 })(window)
